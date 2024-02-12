@@ -5,6 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.canvas.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.scene.paint.Color;
@@ -38,6 +39,10 @@ public class Main extends Application {
         pane.getChildren().add(canvas);
 
         Scene scene = new Scene(pane, 800, 600);
+        
+        Image icon = new Image(getClass().getResourceAsStream("/assets/icon.jpeg"));
+		stage.getIcons().add(icon);
+        
         stage.setScene(scene);
         stage.setResizable(true);
 
