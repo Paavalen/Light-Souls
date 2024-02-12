@@ -1,4 +1,4 @@
-package main;
+package application;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -40,8 +40,8 @@ public class Main extends Application {
 
         Scene scene = new Scene(pane, 800, 600);
         
-        Image icon = new Image(getClass().getResourceAsStream("/assets/icon.jpeg"));
-		stage.getIcons().add(icon);
+        Image icon = new Image(getClass().getResourceAsStream("/resources/assets/icon.jpeg"));
+        stage.getIcons().add(icon);
         
         stage.setScene(scene);
         stage.setResizable(true);
