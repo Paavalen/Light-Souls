@@ -24,7 +24,6 @@ import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-
 public class menu extends Application {
 	private static final Font FONT = Font.font("", FontWeight.BOLD, 18);
 	private VBox menuBox;
@@ -59,10 +58,10 @@ public class menu extends Application {
 		
 		menuBox.setAlignment (Pos. TOP_CENTER); 
 		
-		menuBox.prefWidthProperty().bind(root.widthProperty().multiply(0.4)); // Adjust the multiplier as needed
-	    menuBox.prefHeightProperty().bind(root.heightProperty().multiply(0.5)); // Adjust the multiplier as needed
-	    DoubleExpression menuTranslateX = Bindings.multiply(root.widthProperty(), 0.3); // Adjust the multiplier as needed
-	    DoubleExpression menuTranslateY = Bindings.multiply(root.heightProperty(), 0.4); // Adjust the multiplier as needed
+		menuBox.prefWidthProperty().bind(root.widthProperty().multiply(0.4));
+	    menuBox.prefHeightProperty().bind(root.heightProperty().multiply(0.5));
+	    DoubleExpression menuTranslateX = Bindings.multiply(root.widthProperty(), 0.3);
+	    DoubleExpression menuTranslateY = Bindings.multiply(root.heightProperty(), 0.4);
 	    menuBox.translateXProperty().bind(menuTranslateX);
 	    menuBox.translateYProperty().bind(menuTranslateY);
         
@@ -135,7 +134,12 @@ public class menu extends Application {
 
 	
 	public void start(Stage primaryStage) throws Exception {		
-	    Scene scene = new Scene(createContent());
+	    
+		primaryStage.setTitle("Light Souls"); 
+		Image icon = new Image(getClass().getResourceAsStream("/icon.jpeg"));
+		primaryStage.getIcons().add(icon);
+		
+		Scene scene = new Scene(createContent());
 	    scene.setOnKeyPressed(event -> {
 	        if (event.getCode() == KeyCode.UP) {
 	            if (currentItem > 0) {
