@@ -8,7 +8,9 @@ import javafx.scene.canvas.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 public class Main extends Application {
     public static void main(String[] args) {
