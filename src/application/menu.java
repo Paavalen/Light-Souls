@@ -8,15 +8,19 @@ import java.util.concurrent.ScheduledExecutorService;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleExpression;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -47,7 +51,7 @@ public class menu extends Application {
         Pane root = new Pane();
         root.setPrefSize(900, 600);
 
-        Image backgroundImage = new Image(getClass().getResourceAsStream("/background.jpg"));
+        Image backgroundImage = new Image(getClass().getResourceAsStream("/resources/background.jpg"));
         ImageView backgroundImageView = new ImageView(backgroundImage);
 
         backgroundImageView.fitWidthProperty().bind(root.widthProperty());
@@ -141,9 +145,28 @@ public class menu extends Application {
 
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Light Souls");
-        Image icon = new Image(getClass().getResourceAsStream("/icon.jpeg"));
-        primaryStage.getIcons().add(icon);
+        
+        StackPane pane = new StackPane();
+        Canvas canvas = new Canvas();
+        
+        double aspectRatio = 16.0 / 9.0;
+        
+        primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth) {
+                double newHeight = newWidth.doubleValue() / aspectRatio;
+                primaryStage.setHeight(newHeight);
+            }
+        });
 
+        canvas.widthProperty().bind(pane.widthProperty());
+        canvas.heightProperty().bind(pane.heightProperty());
+
+        pane.getChildren().add(canvas);
+
+        
+        Image icon = new Image(getClass().getResourceAsStream("/resources/icon.jpeg"));
+        primaryStage.getIcons().add(icon);
 
         Scene scene = new Scene(createContent());
         scene.setOnKeyPressed(event -> {
@@ -163,7 +186,9 @@ public class menu extends Application {
                 getMenuItem(currentItem).activate();
             }
         });
+        
         primaryStage.setScene(scene);
+        primaryStage.setResizable(true);
         primaryStage.setOnCloseRequest(event -> {
             bgThread.shutdownNow();
         });
