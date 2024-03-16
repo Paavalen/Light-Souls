@@ -69,14 +69,13 @@ public class Weapon {
     public void removeEffect(WeaponEffect effect) {
         effects.remove(effect);
     }
-}
 
-public interface WeaponBehavior {
-    void update(Weapon weapon, double deltaTime);
-    void fire(Weapon weapon);
-}
+    public interface WeaponBehavior {
+    	void update(Weapon weapon, double deltaTime);
+    	void fire(Weapon weapon);
+    }
 
-public interface WeaponEffect {
-    void update(Weapon weapon, double deltaTime);
-}
+    public interface WeaponEffect {
+    	void update(Weapon weapon, double deltaTime);
+    }
 }
