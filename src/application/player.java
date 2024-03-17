@@ -1,27 +1,43 @@
 package application;
 
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 
-public class player {
+import java.io.File;
+
+public class Player {
     private ImageView playerSprite;
+    private Image upImage, downImage, leftImage, rightImage;
     private double x, y;
     private double speed;
     private boolean moveUp, moveDown, moveLeft, moveRight;
     private int hp;
     private int maxHp;
 
-    public Player(String spriteFilePath, double startX, double startY, double speed) {
-        this.playerSprite = new ImageView(spriteFilePath);
+    public Player(double startX, double startY, double speed) {
+        String resourcesPath = "src/resources/";
+        String upImagePath = resourcesPath + "up_1.png";
+        String downImagePath = resourcesPath + "down_1.png";
+        String leftImagePath = resourcesPath + "left_1.png";
+        String rightImagePath = resourcesPath + "right_1.png";
+
+        this.upImage = new Image(new File(upImagePath).toURI().toString());
+        this.downImage = new Image(new File(downImagePath).toURI().toString());
+        this.leftImage = new Image(new File(leftImagePath).toURI().toString());
+        this.rightImage = new Image(new File(rightImagePath).toURI().toString());
+
+        // Set initial sprite to downImage
+        this.playerSprite = new ImageView(downImage);
         this.x = startX;
         this.y = startY;
         this.speed = speed;
         this.maxHp = 100;
-        this.hp = maxHp; 
+        this.hp = maxHp;
         this.playerSprite.setX(x);
         this.playerSprite.setY(y);
     }
-
+    
     public ImageView getSprite() {
         return playerSprite;
     }
@@ -46,15 +62,19 @@ public class player {
         switch (code) {
             case W:
                 moveUp = true;
+                playerSprite.setImage(upImage);
                 break;
             case S:
                 moveDown = true;
+                playerSprite.setImage(downImage);
                 break;
             case A:
                 moveLeft = true;
+                playerSprite.setImage(leftImage);
                 break;
             case D:
                 moveRight = true;
+                playerSprite.setImage(rightImage);
                 break;
             default:
                 break;
@@ -81,18 +101,23 @@ public class player {
     }
 
     public void update(double deltaTime) {
+        double dx = 0, dy = 0;
+        
         if (moveUp) {
-            y -= speed * deltaTime;
+            dy -= speed * deltaTime;
         }
         if (moveDown) {
-            y += speed * deltaTime;
+            dy += speed * deltaTime;
         }
         if (moveLeft) {
-            x -= speed * deltaTime;
+            dx -= speed * deltaTime;
         }
         if (moveRight) {
-            x += speed * deltaTime;
+            dx += speed * deltaTime;
         }
+
+        x += dx;
+        y += dy;
 
         playerSprite.setX(x);
         playerSprite.setY(y);

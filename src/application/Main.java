@@ -1,53 +1,75 @@
 package application;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
-import javafx.scene.canvas.*;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+import javafx.scene.input.KeyCode;
 
 public class Main extends Application {
-    public static void main(String[] args) {
-        launch(args);
-    }
-
+    
     @Override
-    public void start(Stage stage) {
-        stage.setTitle("Light Souls");
-
-        StackPane pane = new StackPane();
+    public void start(Stage primaryStage) {
+        // Creating the player object
+        Player player = new Player(100, 100, 4);
+        
+        // Creating a pane to hold the player
+        Pane root = new Pane();
+        root.setPrefSize(800, 600);
+        root.getChildren().add(player.getSprite());
+        
+        primaryStage.setTitle("Light Souls");
+        
         Canvas canvas = new Canvas();
 
         double aspectRatio = 16.0 / 9.0;
 
-        // Listener to maintain 16:9 aspect ratio
-        stage.widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth) {
-                double newHeight = newWidth.doubleValue() / aspectRatio;
-                stage.setHeight(newHeight);
-            }
+        primaryStage.widthProperty().addListener((observable, oldWidth, newWidth) -> {
+            double newHeight = newWidth.doubleValue() / aspectRatio;
+            primaryStage.setHeight(newHeight);
         });
 
-        canvas.widthProperty().bind(pane.widthProperty());
-        canvas.heightProperty().bind(pane.heightProperty());
+        canvas.widthProperty().bind(root.widthProperty());
+        canvas.heightProperty().bind(root.heightProperty());
 
-        pane.getChildren().add(canvas);
+        root.getChildren().add(canvas);
 
-        Scene scene = new Scene(pane, 800, 600);
         
-        Image icon = new Image(getClass().getResourceAsStream("/resources/assets/icon.jpeg"));
-        stage.getIcons().add(icon);
+        // Creating the scene
+        Scene scene = new Scene(root, Color.BLACK);
         
-        stage.setScene(scene);
-        stage.setResizable(true);
+        // Handling keyboard input to move the player
+        scene.setOnKeyPressed(event -> {
+            KeyCode code = event.getCode();
+            player.handleInput(code);
+        });
 
-        stage.show();
+        scene.setOnKeyReleased(event -> {
+            KeyCode code = event.getCode();
+            player.stopInput(code);
+        });
+        
+        Image icon = new Image(getClass().getResourceAsStream("/resources/icon.jpeg"));
+        primaryStage.getIcons().add(icon);
+        // Moving the player
+        primaryStage.setScene(scene);
+        primaryStage.show();
+        
+        // Animation timer for updating the player position
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                player.update(1); // Delta time is 1 for simplicity
+            }
+        };
+        timer.start();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }
