@@ -5,7 +5,10 @@ import javafx.stage.Stage;
 import javafx.scene.layout.StackPane;
 import javafx.scene.Scene;
 import javafx.scene.canvas.*;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.animation.*;
 import javafx.util.Duration;
 import javafx.scene.input.KeyCode;
@@ -37,7 +40,7 @@ public class Main extends Application{
 	
 	@Override
 	public void start(Stage stage){
-		stage.setTitle("Simple shooter game");
+		stage.setTitle("Light Souls");
 		
 		StackPane pane = new StackPane();
 		Canvas canvas = new Canvas(WIDTH, HEIGHT);
@@ -59,6 +62,10 @@ public class Main extends Application{
 		canvas.setOnMouseDragged(e -> this.player.shoot(e.getX(), e.getY()));
 		
 		Scene scene = new Scene(pane, WIDTH, HEIGHT);
+
+		Image icon = new Image(getClass().getResourceAsStream("icon.jpeg"));
+	    stage.getIcons().add(icon);
+		
 		stage.setScene(scene);
 		stage.show();
 	}
@@ -81,41 +88,89 @@ public class Main extends Application{
 		spawner.start();
 	}
 	
-	private void update(GraphicsContext gc){
-		gc.clearRect(0, 0, WIDTH, HEIGHT);
-		gc.setFill(Color.LIME);
-		gc.fillRect(0, 0, WIDTH, HEIGHT);
-		for (int i = 0; i < enemies.size(); i++){
-			Enemy e = enemies.get(i);
-			e.render(gc);
-			for (int j = 0; j < Player.bullets.size(); j++){
-				if (e.collided(Player.bullets.get(j).getX(), Player.bullets.get(j).getY(), Enemy.WIDTH, Bullet.WIDTH)){
-					Player.bullets.remove(j);
-					enemies.remove(i);
-					i++;
-					break;
-				}
-			}
-		}
-		this.player.render(gc);
+	private void update(GraphicsContext gc) {
+	    gc.clearRect(0, 0, WIDTH, HEIGHT);
+	    gc.setFill(Color.LIME);
+	    gc.fillRect(0, 0, WIDTH, HEIGHT);
+	    
+	    for (int i = 0; i < enemies.size(); i++) {
+	        Enemy e = enemies.get(i);
+	        e.render(gc);
+	        for (int j = 0; j < Player.bullets.size(); j++) {
+	            if (e.collided(Player.bullets.get(j).getX(), Player.bullets.get(j).getY(), Enemy.WIDTH, Bullet.WIDTH)) {
+	                Player.bullets.remove(j);
+	                enemies.remove(i);
+	                i++;
+	                break;
+	            }
+	        }
+	    }
+	    
+	    this.player.render(gc);
 
-		if (this.keys.getOrDefault(KeyCode.W, false)){
-			this.player.move(0, -SPEED);
-		}
-		if (this.keys.getOrDefault(KeyCode.A, false)){
-			this.player.move(-SPEED, 0);
-		}
-		if (this.keys.getOrDefault(KeyCode.S, false)){
-			this.player.move(0, SPEED);
-		}
-		if (this.keys.getOrDefault(KeyCode.D, false)){
-			this.player.move(SPEED, 0);
-		}
-		
-		// Draw hp bar
-		gc.setFill(Color.GREEN);
-		gc.fillRect(50, HEIGHT-80, 100*(this.player.getHp()/100.0), 30);
-		gc.setStroke(Color.BLACK);
-		gc.strokeRect(50, HEIGHT-80, 100, 30);
+	    if (this.keys.getOrDefault(KeyCode.W, false)) {
+	        this.player.move(0, -SPEED);
+	    }
+	    if (this.keys.getOrDefault(KeyCode.A, false)) {
+	        this.player.move(-SPEED, 0);
+	    }
+	    if (this.keys.getOrDefault(KeyCode.S, false)) {
+	        this.player.move(0, SPEED);
+	    }
+	    if (this.keys.getOrDefault(KeyCode.D, false)) {
+	        this.player.move(SPEED, 0);
+	    }
+	    
+	    // Draw hp bar
+	    gc.setFill(Color.GREEN);
+	    gc.fillRect(50, HEIGHT - 80, 100 * (this.player.getHp() / 100.0), 30);
+	    gc.setStroke(Color.BLACK);
+	    gc.strokeRect(50, HEIGHT - 80, 100, 30);
+
+	    // Check if player's HP is zero
+	    if (this.player.getHp() <= 0) {
+	        gameOver(gc);
+	    }
+	}
+
+	private void gameOver(GraphicsContext gc) {
+	    gc.setFill(Color.BLACK);
+	    gc.fillRect(0, 0, WIDTH, HEIGHT);
+
+	    gc.setFill(Color.RED);
+	    gc.setFont(Font.font("Arial", FontWeight.BOLD, 48));
+	    gc.fillText("GAME OVER", WIDTH / 2 - 150, HEIGHT / 2);
+
+	    // Schedule restart after 5 seconds
+	    shedule(5000, () -> restartGame());
+	}
+	
+	private void restartGame() {
+	    // Clear enemies and reset player HP
+	    enemies.clear();
+	    player.setHp(100);
+
+	    // Reinitialize game
+	    initializeGame();
+	}
+	
+	private void initializeGame() {
+	    // Create a new Timeline to delay the game restart
+	    Timeline delayRestart = new Timeline(new KeyFrame(Duration.seconds(5), event -> {
+	        // Clear canvas
+	        gc.clearRect(0, 0, WIDTH, HEIGHT);
+
+	        // Clear player bullets
+	        Player.bullets.clear();
+
+	        // Restart enemy spawning
+	        spawnEnemies();
+	    }));
+	    
+	    // Set cycle count to 1 to execute the delay once
+	    delayRestart.setCycleCount(1);
+	    
+	    // Start the delay
+	    delayRestart.play();
 	}
 }

@@ -28,6 +28,10 @@ public class Player{
 		return this.hp;
 	}
 	
+	public void setHp(int hp) {
+        this.hp = hp;
+    }
+	
 	public void takeDamage(int dmg){
 		if (damage) return;
 		this.hp -= dmg;
@@ -56,4 +60,6 @@ public class Player{
 		Bullet b = new Bullet(angle, this.x+WIDTH/2, this.y+WIDTH/2);
 		Player.bullets.add(b);
 	}
+
+
 }
