@@ -29,19 +29,17 @@ public class Bullet {
         this.x += Math.cos(this.angle) * SPEED;
         this.y += Math.sin(this.angle) * SPEED;
 
-        checkCollision(); // Check collision with obstacles
+        checkCollision();
     }
 
     private void checkCollision() {
-        // Iterate over obstacles to check collision
         for (Obstacle obstacle : Main.obstacles) {
             if (obstacle.getX() < this.x + WIDTH &&
                 obstacle.getX() + Obstacle.WIDTH > this.x &&
                 obstacle.getY() < this.y + WIDTH &&
                 obstacle.getY() + Obstacle.WIDTH > this.y) {
-                // Bullet collides with obstacle
-                obstacle.takeDamage(); // Reduce obstacle health
-                break; // Exit loop after collision
+                obstacle.takeDamage(); 
+                break; 
             }
         }
     }

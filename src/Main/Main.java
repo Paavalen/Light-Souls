@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 import javafx.scene.layout.StackPane;
 import javafx.scene.Scene;
 import javafx.scene.canvas.*;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -21,7 +22,7 @@ public class Main extends Application{
     private Player player;
     private Map<KeyCode, Boolean> keys = new HashMap<>();
     public static List<Enemy> enemies = new ArrayList<>();
-    public static List<Obstacle> obstacles = new ArrayList<>(); // List to hold obstacles
+    public static List<Obstacle> obstacles = new ArrayList<>(); 
     
     public static void main(String[] args){
         launch(args);
@@ -55,7 +56,7 @@ public class Main extends Application{
         loop.play();
         
         spawnEnemies();
-        spawnObstacles(); // Spawn obstacles
+        spawnObstacles();
         
         canvas.setOnKeyPressed(e -> this.keys.put(e.getCode(), true));
         canvas.setOnKeyReleased(e -> this.keys.put(e.getCode(), false));
@@ -96,8 +97,8 @@ public class Main extends Application{
                 while (true){
                     double x = random.nextDouble()*WIDTH;
                     double y = random.nextDouble()*HEIGHT;
-                    this.obstacles.add(new Obstacle(x, y)); // Add new obstacle
-                    Thread.sleep(1000); // Adjust spawn rate as needed
+                    this.obstacles.add(new Obstacle(x, y)); 
+                    Thread.sleep(1000);
                 }
             } catch (InterruptedException ex){
                 ex.printStackTrace();
@@ -123,7 +124,7 @@ public class Main extends Application{
                 }
             }
         }
-        for (Obstacle obstacle : obstacles) { // Render obstacles
+        for (Obstacle obstacle : obstacles) { 
             obstacle.render(gc);
         }
         this.player.render(gc);
@@ -141,7 +142,6 @@ public class Main extends Application{
             this.player.move(SPEED, 0);
         }
         
-        // Draw hp bar
         gc.setFill(Color.GREEN);
         gc.fillRect(50, HEIGHT-80, 100*(this.player.getHp()/100.0), 30);
         gc.setStroke(Color.BLACK);

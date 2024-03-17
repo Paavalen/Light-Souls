@@ -8,12 +8,12 @@ public class Obstacle {
     private double y;
     public static final double WIDTH = 50;
     public static final double SPEED = 5;
-    private int health; // Health attribute for the obstacle
+    private int health; 
 
     public Obstacle(double x, double y) {
         this.x = x;
         this.y = y;
-        this.health = 45; // Initial health
+        this.health = 45; 
     }
 
     public void render(GraphicsContext gc) {
@@ -22,21 +22,18 @@ public class Obstacle {
     }
 
     public void takeDamage() {
-        health--; // Reduce health by 1
+        health--; 
         if (health <= 0) {
-            destroy(); // Destroy obstacle if health reaches zero
+            destroy(); 
         }
     }
 
     private void destroy() {
-        // Remove obstacle from the game
-        // You can implement removal logic here
-        // For example, remove it from the list of obstacles
+
         Main.obstacles.remove(this);
     }
 
     public void move() {
-        // Move the obstacle downwards
         y += SPEED;
     }
 

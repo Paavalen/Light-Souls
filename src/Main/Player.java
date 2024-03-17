@@ -44,7 +44,6 @@ public class Player{
 	}
 	
 	public void move(double dx, double dy) {
-	    // Check collision with obstacles before moving
 	    if (!checkObstacleCollision(x + dx, y + dy)) {
 	        x += dx;
 	        y += dy;
@@ -52,13 +51,11 @@ public class Player{
 	}
 
 	private boolean checkObstacleCollision(double newX, double newY) {
-	    // Check collision with each obstacle
 	    for (Obstacle obstacle : Main.obstacles) {
 	        if (newX < obstacle.getX() + Obstacle.WIDTH &&
 	            newX + Player.WIDTH > obstacle.getX() &&
 	            newY < obstacle.getY() + Obstacle.WIDTH &&
 	            newY + Player.WIDTH > obstacle.getY()) {
-	            // Collision detected
 	            return true;
 	        }
 	    }
