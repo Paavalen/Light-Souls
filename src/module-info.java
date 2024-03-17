@@ -1,6 +1,10 @@
-module Light_Souls {
-	requires javafx.controls;
+/**
+ * 
+ */
+/**
+ * 
+ */
+module Shooter {
+	exports Main;
 	requires javafx.graphics;
-	
-	opens application to javafx.graphics, javafx.fxml;
 }
