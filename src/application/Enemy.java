@@ -11,7 +11,7 @@ public class Enemy {
     private int damage;
     private boolean isDead;
 
-    private player player; 
+    private Player player; 
     
     public Enemy(String spriteFilePath, double startX, double startY, double speed, int maxHp, int damage, Player player) {
         this.enemySprite = new ImageView(spriteFilePath);
