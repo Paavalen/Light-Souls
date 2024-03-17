@@ -140,37 +140,5 @@ public class Main extends Application{
 	    gc.setFill(Color.RED);
 	    gc.setFont(Font.font("Arial", FontWeight.BOLD, 48));
 	    gc.fillText("GAME OVER", WIDTH / 2 - 150, HEIGHT / 2);
-
-	    // Schedule restart after 5 seconds
-	    shedule(5000, () -> restartGame());
-	}
-	
-	private void restartGame() {
-	    // Clear enemies and reset player HP
-	    enemies.clear();
-	    player.setHp(100);
-
-	    // Reinitialize game
-	    initializeGame();
-	}
-	
-	private void initializeGame() {
-	    // Create a new Timeline to delay the game restart
-	    Timeline delayRestart = new Timeline(new KeyFrame(Duration.seconds(5), event -> {
-	        // Clear canvas
-	        gc.clearRect(0, 0, WIDTH, HEIGHT);
-
-	        // Clear player bullets
-	        Player.bullets.clear();
-
-	        // Restart enemy spawning
-	        spawnEnemies();
-	    }));
-	    
-	    // Set cycle count to 1 to execute the delay once
-	    delayRestart.setCycleCount(1);
-	    
-	    // Start the delay
-	    delayRestart.play();
 	}
 }
