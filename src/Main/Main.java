@@ -5,7 +5,6 @@ import javafx.stage.Stage;
 import javafx.scene.layout.StackPane;
 import javafx.scene.Scene;
 import javafx.scene.canvas.*;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -16,129 +15,165 @@ import javafx.scene.input.KeyCode;
 import java.util.*;
 
 public class Main extends Application{
-	private static final int HEIGHT = 600;
-	private static final int WIDTH = 800;
-	private static final double SPEED = 3;
-	private Player player;
-	private Map<KeyCode, Boolean> keys = new HashMap<>();
-	public static List<Enemy> enemies = new ArrayList<>();
-	
-	public static void main(String[] args){
-		launch(args);
-	}
-	
-	public static void shedule(long time, Runnable r){
-		new Thread(() -> {
-			try {
-				Thread.sleep(time);
-				r.run();
-			} catch (InterruptedException ex){
-				ex.printStackTrace();
-			}
-		}).start();
-	}
-	
-	@Override
-	public void start(Stage stage){
-		stage.setTitle("Light Souls");
-		
-		StackPane pane = new StackPane();
-		Canvas canvas = new Canvas(WIDTH, HEIGHT);
-		canvas.setFocusTraversable(true);
-		GraphicsContext gc = canvas.getGraphicsContext2D();
-		pane.getChildren().add(canvas);
-		
-		this.player = new Player(50, 50);
-		
-		Timeline loop = new Timeline(new KeyFrame(Duration.millis(1000.0/40), e -> update(gc)));
-		loop.setCycleCount(Animation.INDEFINITE);
-		loop.play();
-		
-		spawnEnemies();
-		
-		canvas.setOnKeyPressed(e -> this.keys.put(e.getCode(), true));
-		canvas.setOnKeyReleased(e -> this.keys.put(e.getCode(), false));
-		canvas.setOnMousePressed(e -> this.player.shoot(e.getX(), e.getY()));
-		canvas.setOnMouseDragged(e -> this.player.shoot(e.getX(), e.getY()));
-		
-		Scene scene = new Scene(pane, WIDTH, HEIGHT);
+    private static final int HEIGHT = 600;
+    private static final int WIDTH = 800;
+    private static final double SPEED = 3;
+    private Player player;
+    private Map<KeyCode, Boolean> keys = new HashMap<>();
+    public static List<Enemy> enemies = new ArrayList<>();
+    public static List<Obstacle> obstacles = new ArrayList<>(); // List to hold obstacles
+    
+    public static void main(String[] args){
+        launch(args);
+    }
+    
+    public static void shedule(long time, Runnable r){
+        new Thread(() -> {
+            try {
+                Thread.sleep(time);
+                r.run();
+            } catch (InterruptedException ex){
+                ex.printStackTrace();
+            }
+        }).start();
+    }
+    
+    @Override
+    public void start(Stage stage){
+        stage.setTitle("Simple shooter game");
+        
+        StackPane pane = new StackPane();
+        Canvas canvas = new Canvas(WIDTH, HEIGHT);
+        canvas.setFocusTraversable(true);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        pane.getChildren().add(canvas);
+        
+        this.player = new Player(50, 50);
+        
+        Timeline loop = new Timeline(new KeyFrame(Duration.millis(1000.0/40), e -> update(gc)));
+        loop.setCycleCount(Animation.INDEFINITE);
+        loop.play();
+        
+        spawnEnemies();
+        spawnObstacles(); // Spawn obstacles
+        
+        canvas.setOnKeyPressed(e -> this.keys.put(e.getCode(), true));
+        canvas.setOnKeyReleased(e -> this.keys.put(e.getCode(), false));
+        canvas.setOnMousePressed(e -> this.player.shoot(e.getX(), e.getY()));
+        canvas.setOnMouseDragged(e -> this.player.shoot(e.getX(), e.getY()));
+        
+        Scene scene = new Scene(pane, WIDTH, HEIGHT);
+        stage.setScene(scene);
+        stage.show();
+    }
+    
+    private void spawnEnemies(){
+        Thread spawner = new Thread(() -> {
+            try {
+                Random random = new Random();
+                while (true){
+                    double x = random.nextDouble()*WIDTH;
+                    double y = random.nextDouble()*HEIGHT;
+                    this.enemies.add(new Enemy(this.player, x, y));
+                    Thread.sleep(2000);
+                }
+            } catch (InterruptedException ex){
+                ex.printStackTrace();
+            }
+        });
+        spawner.setDaemon(true);
+        spawner.start();
+    }
+    
+    private void spawnObstacles(){
+        Thread spawner = new Thread(() -> {
+            try {
+                Random random = new Random();
+                while (true){
+                    double x = random.nextDouble()*WIDTH;
+                    double y = random.nextDouble()*HEIGHT;
+                    this.obstacles.add(new Obstacle(x, y)); // Add new obstacle
+                    Thread.sleep(1000); // Adjust spawn rate as needed
+                }
+            } catch (InterruptedException ex){
+                ex.printStackTrace();
+            }
+        });
+        spawner.setDaemon(true);
+        spawner.start();
+    }
+    
+    private void update(GraphicsContext gc){
+        gc.clearRect(0, 0, WIDTH, HEIGHT);
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0, 0, WIDTH, HEIGHT);
+        for (int i = 0; i < enemies.size(); i++){
+            Enemy e = enemies.get(i);
+            e.render(gc);
+            for (int j = 0; j < Player.bullets.size(); j++){
+                if (e.collided(Player.bullets.get(j).getX(), Player.bullets.get(j).getY(), Enemy.WIDTH, Bullet.WIDTH)){
+                    Player.bullets.remove(j);
+                    enemies.remove(i);
+                    i++;
+                    break;
+                }
+            }
+        }
+        for (Obstacle obstacle : obstacles) { // Render obstacles
+            obstacle.render(gc);
+        }
+        this.player.render(gc);
 
-		Image icon = new Image(getClass().getResourceAsStream("icon.jpeg"));
-	    stage.getIcons().add(icon);
-		
-		stage.setScene(scene);
-		stage.show();
-	}
-	
-	private void spawnEnemies(){
-		Thread spawner = new Thread(() -> {
-			try {
-				Random random = new Random();
-				while (true){
-					double x = random.nextDouble()*WIDTH;
-					double y = random.nextDouble()*HEIGHT;
-					this.enemies.add(new Enemy(this.player, x, y));
-					Thread.sleep(2000);
-				}
-			} catch (InterruptedException ex){
-				ex.printStackTrace();
-			}
-		});
-		spawner.setDaemon(true);
-		spawner.start();
-	}
-	
-	private void update(GraphicsContext gc) {
-	    gc.clearRect(0, 0, WIDTH, HEIGHT);
-	    gc.setFill(Color.LIME);
-	    gc.fillRect(0, 0, WIDTH, HEIGHT);
-	    
-	    for (int i = 0; i < enemies.size(); i++) {
-	        Enemy e = enemies.get(i);
-	        e.render(gc);
-	        for (int j = 0; j < Player.bullets.size(); j++) {
-	            if (e.collided(Player.bullets.get(j).getX(), Player.bullets.get(j).getY(), Enemy.WIDTH, Bullet.WIDTH)) {
-	                Player.bullets.remove(j);
-	                enemies.remove(i);
-	                i++;
-	                break;
-	            }
-	        }
-	    }
-	    
-	    this.player.render(gc);
+        if (this.keys.getOrDefault(KeyCode.W, false)){
+            this.player.move(0, -SPEED);
+        }
+        if (this.keys.getOrDefault(KeyCode.A, false)){
+            this.player.move(-SPEED, 0);
+        }
+        if (this.keys.getOrDefault(KeyCode.S, false)){
+            this.player.move(0, SPEED);
+        }
+        if (this.keys.getOrDefault(KeyCode.D, false)){
+            this.player.move(SPEED, 0);
+        }
+        
+        // Draw hp bar
+        gc.setFill(Color.GREEN);
+        gc.fillRect(50, HEIGHT-80, 100*(this.player.getHp()/100.0), 30);
+        gc.setStroke(Color.BLACK);
+        gc.strokeRect(50, HEIGHT-80, 100, 30);
+        
+        
+        if (this.player.getHp() <= 0) {
+            gameOver(gc);
 
-	    if (this.keys.getOrDefault(KeyCode.W, false)) {
-	        this.player.move(0, -SPEED);
-	    }
-	    if (this.keys.getOrDefault(KeyCode.A, false)) {
-	        this.player.move(-SPEED, 0);
-	    }
-	    if (this.keys.getOrDefault(KeyCode.S, false)) {
-	        this.player.move(0, SPEED);
-	    }
-	    if (this.keys.getOrDefault(KeyCode.D, false)) {
-	        this.player.move(SPEED, 0);
-	    }
-	    
-	    // Draw hp bar
-	    gc.setFill(Color.GREEN);
-	    gc.fillRect(50, HEIGHT - 80, 100 * (this.player.getHp() / 100.0), 30);
-	    gc.setStroke(Color.BLACK);
-	    gc.strokeRect(50, HEIGHT - 80, 100, 30);
+        }
+    }
+    
+    private void gameOver(GraphicsContext gc) {
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0, 0, WIDTH, HEIGHT);
 
-	    // Check if player's HP is zero
-	    if (this.player.getHp() <= 0) {
-	        gameOver(gc);
-	    }
-	}
-
-	private void gameOver(GraphicsContext gc) {
-	    gc.setFill(Color.BLACK);
-	    gc.fillRect(0, 0, WIDTH, HEIGHT);
-
-	    gc.setFill(Color.RED);
-	    gc.setFont(Font.font("Arial", FontWeight.BOLD, 48));
-	    gc.fillText("GAME OVER", WIDTH / 2 - 150, HEIGHT / 2);
-	}
+        gc.setFill(Color.RED);
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 48));
+        gc.fillText("GAME OVER", WIDTH / 2 - 150, HEIGHT / 2);
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -7,7 +7,7 @@ import java.util.*;
 public class Player{
 	private double x, y;
 	public static List<Bullet> bullets = new ArrayList<>();
-	private static final double WIDTH = 50;
+	public static final double WIDTH = 50;
 	private boolean shooting = false, damage = false;
 	private int hp = 100;
 	
@@ -28,10 +28,6 @@ public class Player{
 		return this.hp;
 	}
 	
-	public void setHp(int hp) {
-        this.hp = hp;
-    }
-	
 	public void takeDamage(int dmg){
 		if (damage) return;
 		this.hp -= dmg;
@@ -40,26 +36,45 @@ public class Player{
 	}
 	
 	public void render(GraphicsContext gc){
-		gc.setFill(Color.RED);
+		gc.setFill(Color.YELLOW);
 		gc.fillOval(this.x, this.y, WIDTH, WIDTH);
 		for (int i = 0; i < Player.bullets.size(); i++){
 			Player.bullets.get(i).render(gc);
 		}
 	}
 	
-	public void move(double x, double y){
-		this.x += x;
-		this.y += y;
+	public void move(double dx, double dy) {
+	    // Check collision with obstacles before moving
+	    if (!checkObstacleCollision(x + dx, y + dy)) {
+	        x += dx;
+	        y += dy;
+	    }
+	}
+
+	private boolean checkObstacleCollision(double newX, double newY) {
+	    // Check collision with each obstacle
+	    for (Obstacle obstacle : Main.obstacles) {
+	        if (newX < obstacle.getX() + Obstacle.WIDTH &&
+	            newX + Player.WIDTH > obstacle.getX() &&
+	            newY < obstacle.getY() + Obstacle.WIDTH &&
+	            newY + Player.WIDTH > obstacle.getY()) {
+	            // Collision detected
+	            return true;
+	        }
+	    }
+
+	    return false;
 	}
 	
 	public void shoot(double x, double y){
 		if (shooting) return;
 		shooting = true;
 		Main.shedule(150, () -> this.shooting = false);
-		double angle = Math.atan2(y-this.y, x-this.x); // Radians
+		double angle = Math.atan2(y-this.y, x-this.x);
 		Bullet b = new Bullet(angle, this.x+WIDTH/2, this.y+WIDTH/2);
 		Player.bullets.add(b);
 	}
-
-
+	
+	
+	
 }

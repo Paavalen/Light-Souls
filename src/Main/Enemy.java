@@ -33,7 +33,7 @@ public class Enemy{
 	}
 	
 	public void render(GraphicsContext gc){
-		gc.setFill(Color.BLUE);
+		gc.setFill(Color.RED);
 		gc.fillOval(this.x, this.y, WIDTH, WIDTH);
 		double distance = Math.sqrt(Math.pow(this.x-this.player.getX(), 2)+Math.pow(this.y-this.player.getY(), 2));
 		if (distance <= 60){
