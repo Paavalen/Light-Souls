@@ -8,32 +8,38 @@ import java.io.File;
 
 public class Player {
     private ImageView playerSprite;
-    private Image upImage, downImage, leftImage, rightImage;
+    private Image[] upImages, downImages, leftImages, rightImages;
     private double x, y;
     private double speed;
     private boolean moveUp, moveDown, moveLeft, moveRight;
     private int hp;
     private int maxHp;
+    private int frameCounter;
 
     public Player(double startX, double startY, double speed) {
-        String resourcesPath = "src/resources/";
-        String upImagePath = resourcesPath + "up_1.png";
-        String downImagePath = resourcesPath + "down_1.png";
-        String leftImagePath = resourcesPath + "left_1.png";
-        String rightImagePath = resourcesPath + "right_1.png";
+        String resourcesPath = "src/resources/player/";
+        String up1 = resourcesPath + "up_1.png";
+        String up2 = resourcesPath + "up_2.png";
+        String down1 = resourcesPath + "down_1.png";
+        String down2 = resourcesPath + "down_2.png";
+        String left1 = resourcesPath + "left_1.png";
+        String left2 = resourcesPath + "left_2.png";
+        String right1 = resourcesPath + "right_1.png";
+        String right2 = resourcesPath + "right_2.png";
 
-        this.upImage = new Image(new File(upImagePath).toURI().toString());
-        this.downImage = new Image(new File(downImagePath).toURI().toString());
-        this.leftImage = new Image(new File(leftImagePath).toURI().toString());
-        this.rightImage = new Image(new File(rightImagePath).toURI().toString());
+        this.upImages = new Image[]{new Image(new File(up1).toURI().toString()), new Image(new File(up2).toURI().toString())};
+        this.downImages = new Image[]{new Image(new File(down1).toURI().toString()), new Image(new File(down2).toURI().toString())};
+        this.leftImages = new Image[]{new Image(new File(left1).toURI().toString()), new Image(new File(left2).toURI().toString())};
+        this.rightImages = new Image[]{new Image(new File(right1).toURI().toString()), new Image(new File(right2).toURI().toString())};
 
         // Set initial sprite to downImage
-        this.playerSprite = new ImageView(downImage);
+        this.playerSprite = new ImageView(downImages[0]);
         this.x = startX;
         this.y = startY;
         this.speed = speed;
         this.maxHp = 100;
         this.hp = maxHp;
+        this.frameCounter = 0;
         this.playerSprite.setX(x);
         this.playerSprite.setY(y);
     }
@@ -62,19 +68,15 @@ public class Player {
         switch (code) {
             case W:
                 moveUp = true;
-                playerSprite.setImage(upImage);
                 break;
             case S:
                 moveDown = true;
-                playerSprite.setImage(downImage);
                 break;
             case A:
                 moveLeft = true;
-                playerSprite.setImage(leftImage);
                 break;
             case D:
                 moveRight = true;
-                playerSprite.setImage(rightImage);
                 break;
             default:
                 break;
@@ -101,6 +103,13 @@ public class Player {
     }
 
     public void update(double deltaTime) {
+        frameCounter++;
+
+        if (frameCounter >= 15) {
+            frameCounter = 0;
+            updateSpriteImages();
+        }
+
         double dx = 0, dy = 0;
         
         if (moveUp) {
@@ -121,5 +130,17 @@ public class Player {
 
         playerSprite.setX(x);
         playerSprite.setY(y);
+    }
+
+    private void updateSpriteImages() {
+        if (moveUp) {
+            playerSprite.setImage(upImages[frameCounter % 2]);
+        } else if (moveDown) {
+            playerSprite.setImage(downImages[frameCounter % 2]);
+        } else if (moveLeft) {
+            playerSprite.setImage(leftImages[frameCounter % 2]);
+        } else if (moveRight) {
+            playerSprite.setImage(rightImages[frameCounter % 2]);
+        }
     }
 }
