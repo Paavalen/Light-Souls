@@ -26,5 +26,5 @@ To run Light Souls on your machine, ensure you have Java installed. Then follow 
 
 1. Clone this repository to your local machine.
 2. Navigate to the project directory.
-3. Compile the Java files using ` Main.java`.
+3. Compile the Java files using `Main.java`.
 4. Run the game using `Main`.
