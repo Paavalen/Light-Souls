@@ -40,7 +40,7 @@ public class Main extends Application{
     
     @Override
     public void start(Stage stage){
-        stage.setTitle("Simple shooter game");
+        stage.setTitle("Light Souls");
         
         StackPane pane = new StackPane();
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
@@ -63,6 +63,10 @@ public class Main extends Application{
         canvas.setOnMouseDragged(e -> this.player.shoot(e.getX(), e.getY()));
         
         Scene scene = new Scene(pane, WIDTH, HEIGHT);
+
+		Image icon = new Image(getClass().getResourceAsStream("icon.jpeg"));
+		stage.getIcons().add(icon);
+
         stage.setScene(scene);
         stage.show();
     }
