@@ -16,13 +16,13 @@ import javafx.scene.input.KeyCode;
 import java.util.*;
 
 public class Main extends Application{
-    private static final int HEIGHT = 600;
-    private static final int WIDTH = 800;
+    private static final int HEIGHT = 1080;
+    private static final int WIDTH = 1920;
     private static final double SPEED = 3;
     private Player player;
     private Map<KeyCode, Boolean> keys = new HashMap<>();
     public static List<Enemy> enemies = new ArrayList<>();
-    public static List<Obstacle> obstacles = new ArrayList<>(); 
+    public static List<Obstacle> obstacles = new ArrayList<>();
     
     public static void main(String[] args){
         launch(args);
@@ -49,7 +49,7 @@ public class Main extends Application{
         GraphicsContext gc = canvas.getGraphicsContext2D();
         pane.getChildren().add(canvas);
         
-        this.player = new Player(50, 50);
+        this.player = new Player(940, 500);
         
         Timeline loop = new Timeline(new KeyFrame(Duration.millis(1000.0/40), e -> update(gc)));
         loop.setCycleCount(Animation.INDEFINITE);
@@ -65,10 +65,12 @@ public class Main extends Application{
         
         Scene scene = new Scene(pane, WIDTH, HEIGHT);
 
-		Image icon = new Image(getClass().getResourceAsStream("icon.jpeg"));
-		stage.getIcons().add(icon);
+        Image icon = new Image(getClass().getResourceAsStream("icon.jpeg"));
+        stage.getIcons().add(icon);
 
         stage.setScene(scene);
+        stage.setFullScreen(true);
+        stage.setFullScreenExitHint("");
         stage.show();
     }
     
@@ -143,9 +145,9 @@ public class Main extends Application{
         }
         
         gc.setFill(Color.GREEN);
-        gc.fillRect(50, HEIGHT-80, 100*(this.player.getHp()/100.0), 30);
+        gc.fillRect(200, 950, 600 * (this.player.getHp() / 100.0), 90);
         gc.setStroke(Color.BLACK);
-        gc.strokeRect(50, HEIGHT-80, 100, 30);
+        gc.strokeRect(200, 950, 600, 90);
         
         
         if (this.player.getHp() <= 0) {
@@ -159,25 +161,7 @@ public class Main extends Application{
         gc.fillRect(0, 0, WIDTH, HEIGHT);
 
         gc.setFill(Color.RED);
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 48));
-        gc.fillText("GAME OVER", WIDTH / 2 - 150, HEIGHT / 2);
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 72));
+        gc.fillText("GAME OVER", WIDTH / 2 - 250, HEIGHT / 2);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
